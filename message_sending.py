@@ -5,18 +5,15 @@ from cryptography.fernet import Fernet
 key = Fernet.generate_key()
 cipher = Fernet(key)
 
-print(key)
+print(f"Key generated: {len(key)} bytes")
 print(cipher)
 
 # Enter the message
-message = input(b"Enter message")
-message = "hello"
+message = input("Enter message: ")
 print(message)
-
 # Encrypt the message
-encrypted = cipher.encrypt(message)
+encrypted = cipher.encrypt(message.encode())
 print(encrypted)
-
 # Decrypt the message
 decrypted = cipher.decrypt(encrypted)
 print(decrypted)

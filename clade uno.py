@@ -1,5 +1,4 @@
-#placehlder
-
+#placeholder
 # SECURE MESSENGER MINI EXAMPLE
 # This demonstrates the core cryptography concepts for secure messaging
 

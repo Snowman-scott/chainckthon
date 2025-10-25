@@ -18,17 +18,26 @@ def clear_terminal():
 
 # Create keys if none exist
 def setup():
-    if not os.path.exists(Keys_DIR):
-        os.makedirs(Keys_DIR)
-    if not os.path.exists(User_db):
-        with open(User_db, 'w') as f:
-            json.dump({}, f)
+    try:
+        if not os.path.exists(Keys_DIR):
+            os.makedirs(Keys_DIR)
+        if not os.path.exists(User_db):
+            with open(User_db, 'w') as f:
+                json.dump({}, f)
+    except (OSError, IOError) as e:
+        print(f"Error during setup: {e}")
+        raise
 
 # Load users from Json
 def load_users():
-    with open(User_db, 'r') as f:
-        return json.load(f)
-
+    try:
+        with open(User_db, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"Error: Users database is corrupted: {e}")
+        raise
 # Save users to users.json    
 def save_users(users):
     with open(User_db, 'w') as f:
@@ -45,7 +54,7 @@ def hash_password(password, salt=None):
         algorithm=hashes.SHA256(),
         length=32,
         salt=salt,
-        iterations=100000,
+        iterations=600000,
         backend=default_backend()
         )
 
@@ -149,7 +158,7 @@ def sign_up():
             pc1 = True
         
         if pc1 != True:
-            None
+            pass
         else:
             confirm = input("Confirm password: ").strip()
             if password != confirm:
@@ -216,8 +225,6 @@ def log_in():
             print("username not found!")
         elif username in users:
             break
-        else:
-            print("Error! \nFinding your username was either unsucsesfull \nor\n Random error occured")
 
     # Get password
     while True:
@@ -237,23 +244,22 @@ def log_in():
     print(f"\n✓ Logged in as {username}")
 
     #Load Private key
-    while True:
-        print("=== E2E Encrypted Messaging App ===")
-        print("\n===LOG IN===")
-        print("\nAtempting to load private key...")
-        try:
-            private_key = Load_private_key(username, password)
-            print("✓ Private key loaded")
+    print("=== E2E Encrypted Messaging App ===")
+    print("\n===LOG IN===")
+    print("\nAtempting to load private key...")
+    try:
+        private_key = Load_private_key(username, password)
+        print("✓ Private key loaded")
 
-            return {
-                "username": username,
-                "private_key": private_key,
-                "public_key": user_data['public_key']
-                }
+        return {
+            "username": username,
+            "private_key": private_key,
+            "public_key": user_data['public_key']
+            }
 
-        except Exception as e:
-            print(f"Error loading private key: {e}")
-            return None
+    except Exception as e:
+        print(f"Error loading private key: {e}")
+        return None
 
 # Log in or sign up choice
 def log_in_and_sign_up():
@@ -265,10 +271,8 @@ def log_in_and_sign_up():
         los = input("\nDo you want to log in or sign up? (L/S)").strip().upper()
         if los in ['S', 'SIGN UP']:
             sign_up()
-            break
         elif los in ['L', 'LOGIN','LOG IN']:
             log_in()
-            break
         else:
             print("Please enter L or S")
 
