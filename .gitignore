@@ -1,2 +1,18 @@
-/.Users.json.env
-/.Keys
+# Environment secrets and API keys
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+keys/
+# Environment secrets and API keys
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+keys/
+.Keys/
+.Users.json

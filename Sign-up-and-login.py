@@ -259,7 +259,6 @@ def log_in():
 
     except Exception as e:
         print(f"Error loading private key: {e}")
-        return None
 
 # Log in or sign up choice
 def log_in_and_sign_up():
