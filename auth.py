@@ -277,13 +277,12 @@ def log_in_and_sign_up():
 
     return None
 
-# Main Execution
+'''
+# At the end of auth.py
 if __name__ == "__main__":
-    print("=== E2E Encrypted Messaging App ===")
+    # Only run this when testing auth directly
+    print("=== Testing Auth System ===")
     session = log_in_and_sign_up()
-
     if session:
-        print(f"\n✓ Logged in successfully!")
-        print(f"✓ Username: {session['username']}")
-        print("✓ Keys loaded and ready")
-        print("\n[Ready for messaging functionality]")
+        print("Auth test successful!")
+'''
