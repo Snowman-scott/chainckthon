@@ -7,6 +7,8 @@
 secrets/
 keys/
 .Keys/
+Users/
+.Users/
 .Users.json
 Users.json
 *.json
