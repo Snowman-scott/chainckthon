@@ -9,39 +9,58 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 
-User_db = "Users.json"
+User_DIR = "Users"  # Now it's a directory!
 Keys_DIR = "Keys"
 
 # clear terminal
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# Create keys if none exist
+# Create directories if none exist
 def setup():
     try:
         if not os.path.exists(Keys_DIR):
             os.makedirs(Keys_DIR)
-        if not os.path.exists(User_db):
-            with open(User_db, 'w') as f:
-                json.dump({}, f)
+        if not os.path.exists(User_DIR):  # Create Users directory
+            os.makedirs(User_DIR)
     except (OSError, IOError) as e:
         print(f"Error during setup: {e}")
         raise
 
-# Load users from Json
-def load_users():
+# Load single user from their file
+def load_user(username):
+    """Load a specific user's data"""
+    user_file = os.path.join(User_DIR, f"{username}.json")
     try:
-        with open(User_db, 'r') as f:
+        with open(user_file, 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        return {}
+        return None
     except json.JSONDecodeError as e:
-        print(f"Error: Users database is corrupted: {e}")
+        print(f"Error: User file corrupted: {e}")
         raise
-# Save users to users.json    
-def save_users(users):
-    with open(User_db, 'w') as f:
-        json.dump(users, f, indent=2)
+
+# Load all users (for checking if username exists)
+def load_all_users():
+    """Load all usernames"""
+    try:
+        users = []
+        if os.path.exists(User_DIR):
+            for filename in os.listdir(User_DIR):
+                if filename.endswith('.json'):
+                    username = filename[:-5]  # Remove .json extension
+                    users.append(username)
+        return users
+    except Exception as e:
+        print(f"Error loading users: {e}")
+        return []
+
+# Save single user to their file    
+def save_user(username, user_data):
+    """Save a user's data to their file"""
+    user_file = os.path.join(User_DIR, f"{username}.json")
+    with open(user_file, 'w') as f:
+        json.dump(user_data, f, indent=2)
 
 # Hash password with PBKDF2
 def hash_password(password, salt=None):
@@ -50,13 +69,13 @@ def hash_password(password, salt=None):
     else:
         salt = base64.b64decode(salt)
 
-    kdf =   PBKDF2HMAC(
+    kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
         salt=salt,
         iterations=600000,
         backend=default_backend()
-        )
+    )
 
     password_hash = kdf.derive(password.encode())
 
@@ -101,7 +120,6 @@ def save_private_key(username, private_key, password):
         f.write(pem)
 
 # Load encrypted private Key
-
 def Load_private_key(username, password):
     key_file = os.path.join(Keys_DIR, f"{username}.key")
 
@@ -109,7 +127,8 @@ def Load_private_key(username, password):
         pem = f.read()
 
     private_key = serialization.load_pem_private_key(
-        pem, password=password.encode(),
+        pem, 
+        password=password.encode(),
         backend=default_backend()
     )
 
@@ -121,7 +140,7 @@ def sign_up():
     print("=== E2E Encrypted Messaging App ===")
     print("\n=== SIGN UP ===")
 
-    users = load_users()
+    all_users = load_all_users()  # Get list of all usernames
     
     # Get username
     while True:
@@ -133,7 +152,7 @@ def sign_up():
         if not username:
             print("Username cannot be empty")
             time.sleep(1.5)
-        elif username in users:
+        elif username in all_users:  # Check against list
             print("Username already taken!")
             time.sleep(1.5)
         else:
@@ -162,7 +181,7 @@ def sign_up():
         else:
             confirm = input("Confirm password: ").strip()
             if password != confirm:
-                print("Password don't match!")
+                print("Passwords don't match!")
                 time.sleep(1)
                 pc2 = False
             else:
@@ -184,7 +203,7 @@ def sign_up():
     password_hash, salt = hash_password(password)
 
     # Gen Keys
-    print("Generating Encyption Keys")
+    print("Generating Encryption Keys")
     private_key, public_key = gen_keypair()
 
     # convert pub key to string
@@ -193,13 +212,14 @@ def sign_up():
     # Saves Encrypted Private key
     save_private_key(username, private_key, password)
 
-    # Save user data 
-    users[username] = {
+    # Save user data to their own file
+    user_data = {
+        "username": username,
         "password_hash": password_hash,
         "salt": salt,
         "public_key": public_key_pem
     }
-    save_users(users)
+    save_user(username, user_data)  # Save to Users/username.json
 
     print(f"\n✓ Account created successfully!")
     print(f"✓ Username: {username}")
@@ -211,42 +231,48 @@ def sign_up():
 def log_in():
     clear_terminal()
     print("=== E2E Encrypted Messaging App ===")
-    print("\n===LOG IN===")
+    print("\n=== LOG IN ===")
 
-    users = load_users()
+    all_users = load_all_users()  # Get list of all usernames
 
     while True:
         clear_terminal()
         print("=== E2E Encrypted Messaging App ===")
-        print("\n===LOG IN===")
+        print("\n=== LOG IN ===")
 
         username = input("Enter Username: ").strip()
-        if username not in users:
-            print("username not found!")
-        elif username in users:
+        if username not in all_users:  # Check against list
+            print("Username not found!")
+            time.sleep(1.5)
+        else:
             break
+
+    # Load this user's data
+    user_data = load_user(username)
+    
+    if not user_data:
+        print("Error: Could not load user data!")
+        return None
 
     # Get password
     while True:
         clear_terminal()
         print("=== E2E Encrypted Messaging App ===")
-        print("\n===LOG IN===")
+        print("\n=== LOG IN ===")
+        print(f"Username: {username}")
 
         password = input("Enter Password: ").strip()
 
-        user_data = users[username]
-
         if not Verify_password(password, user_data['password_hash'], user_data['salt']):
             print("Incorrect password!")
+            time.sleep(1.5)
         else:
             break
 
     print(f"\n✓ Logged in as {username}")
 
-    #Load Private key
-    print("=== E2E Encrypted Messaging App ===")
-    print("\n===LOG IN===")
-    print("\nAtempting to load private key...")
+    # Load Private key
+    print("\nAttempting to load private key...")
     try:
         private_key = Load_private_key(username, password)
         print("✓ Private key loaded")
@@ -255,10 +281,11 @@ def log_in():
             "username": username,
             "private_key": private_key,
             "public_key": user_data['public_key']
-            }
+        }
 
     except Exception as e:
         print(f"Error loading private key: {e}")
+        return None
 
 # Log in or sign up choice
 def log_in_and_sign_up():
@@ -267,22 +294,31 @@ def log_in_and_sign_up():
 
     while True:
         print("=== E2E Encrypted Messaging App ===")
-        los = input("\nDo you want to log in or sign up? (L/S)").strip().upper()
+        los = input("\nDo you want to log in or sign up? (L/S): ").strip().upper()
         if los in ['S', 'SIGN UP']:
-            sign_up()
-        elif los in ['L', 'LOGIN','LOG IN']:
-            log_in()
+            result = sign_up()
+            if result:
+                login_now = input("\nLog in now? (Y/N): ").strip().upper()
+                if login_now == 'Y':
+                    continue
+                else:
+                    return None
+        elif los in ['L', 'LOGIN', 'LOG IN']:
+            session = log_in()
+            if session:
+                return session
+            else:
+                print("Login failed. Try again.")
+                time.sleep(1.5)
         else:
             print("Please enter L or S")
 
-    return None
-
-'''
 # At the end of auth.py
 if __name__ == "__main__":
-    # Only run this when testing auth directly
     print("=== Testing Auth System ===")
     session = log_in_and_sign_up()
     if session:
-        print("Auth test successful!")
-'''
+        print("\n✓ Auth test successful!")
+        print(f"✓ Logged in as: {session['username']}")
+    else:
+        print("\nAuth test ended.")
