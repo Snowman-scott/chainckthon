@@ -1,0 +1,14 @@
+# E2E Encrypted Messenger - Python Dependencies
+
+# Core encryption library
+cryptography>=41.0.0
+
+# File locking for concurrent message writes
+filelock>=3.12.0
+
+# Optional: For Flask API backend (if using web UI)
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Optional: For better terminal output
+colorama>=0.4.6
