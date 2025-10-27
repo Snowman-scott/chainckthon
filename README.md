@@ -14,7 +14,7 @@ OR
 
 ultra-quick-start.md # Would not recommend
 
-To try running for yourself 
+To try running for yourself (Found in the GUIDES! folder!)
 NOTE: Sorry if the Guides are bit bad they were made by AI
 NOTE: May not work need dependancies
 
