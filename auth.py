@@ -322,3 +322,6 @@ if __name__ == "__main__":
         print(f"✓ Logged in as: {session['username']}")
     else:
         print("\nAuth test ended.")
+
+
+# Note to self! : Cbzm hvwg twzs obr gcas chvsfg ksfs qcrsr kwhvcih Qcdm doghs tfca OW ;Fob cih ct hwas
