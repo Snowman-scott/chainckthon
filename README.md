@@ -8,7 +8,7 @@ ONLY A DEMO!
 
 Refere To:
 
-ultra-detailed-tutorial.md # If wanting bes shot of it Running use this!
+ultra-detailed-tutorial.md # If wanting best shot of it Running use this!
 
 OR
 
