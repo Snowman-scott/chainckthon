@@ -7,6 +7,20 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.backends import default_backend
 import os
 import base64
+import logging
+
+# Module logger and specific exceptions for callers to catch
+logger = logging.getLogger(__name__)
+
+
+class EncryptionError(Exception):
+    """Raised when encryption fails."""
+    pass
+
+
+class DecryptionError(Exception):
+    """Raised when decryption fails."""
+    pass
 
 # ============================================
 # MESSAGE ENCRYPTION (SENDING)
@@ -60,8 +74,10 @@ def encrypt_message(message, recipient_public_key):
         }
         
     except Exception as e:
-        # Log error internally without exposing details
-        raise Exception("Failed to encrypt message")
+        # Log full stack trace for diagnostics, but raise a specific
+        # exception so callers can handle this case explicitly.
+        logger.exception("Failed to encrypt message")
+        raise EncryptionError("Failed to encrypt message") from e
 
 
 # ============================================
@@ -104,8 +120,10 @@ def decrypt_message(encrypted_content, my_private_key):
         return decrypted_message.decode('utf-8')
         
     except Exception as e:
-        # Log error internally without exposing details
-        raise Exception("Failed to decrypt message")
+        # Log full stack trace for diagnostics, but raise a specific
+        # exception so callers can handle this case explicitly.
+        logger.exception("Failed to decrypt message")
+        raise DecryptionError("Failed to decrypt message") from e
 
 
 # ============================================

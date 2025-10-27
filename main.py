@@ -44,7 +44,6 @@ def main():
     clear_terminal()
     
     # Setup
-    # Setup
     try:
         setup_messages()
     except Exception as e:
