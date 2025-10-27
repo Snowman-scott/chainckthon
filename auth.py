@@ -314,6 +314,7 @@ def log_in_and_sign_up():
             print("Please enter L or S")
 
 # At the end of auth.py
+"""
 if __name__ == "__main__":
     print("=== Testing Auth System ===")
     session = log_in_and_sign_up()
@@ -322,6 +323,6 @@ if __name__ == "__main__":
         print(f"✓ Logged in as: {session['username']}")
     else:
         print("\nAuth test ended.")
-
+"""
 
 # Note to self! : Cbzm hvwg twzs obr gcas chvsfg ksfs qcrsr kwhvcih Qcdm doghs tfca OW ;Fob cih ct hwas

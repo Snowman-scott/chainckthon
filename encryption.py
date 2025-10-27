@@ -129,7 +129,7 @@ def decrypt_message(encrypted_content, my_private_key):
 # ============================================
 # DEMO/TEST
 # ============================================
-
+"""
 if __name__ == "__main__":
     print("=== E2E Encryption Demo ===\n")
     
@@ -175,3 +175,4 @@ if __name__ == "__main__":
     decrypted = decrypt_message(encrypted, bob_private)
     print(f"\n✓ Bob decrypted the message: {decrypted}")
     print(f"✓ Match: {message == decrypted}")
+    """

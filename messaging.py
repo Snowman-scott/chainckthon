@@ -231,9 +231,10 @@ def read_messages_programmatic(user_id, private_key):
 # ============================================
 # DEMO/TEST
 # ============================================
-
+"""
 if __name__ == "__main__":
     print("This module requires auth.py and message_storage.py to run")
     print("\nImport and use these functions:")
     print("  - send_message_ui(session)")
     print("  - check_inbox_ui(session)")
+    """
