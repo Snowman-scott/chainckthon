@@ -217,7 +217,7 @@ def read_messages_programmatic(user_id, private_key):
                     'message': decrypted_text,
                     'timestamp': msg.get('timestamp', 'Unknown')
                 })
-            except:
+            except Exception:
                 # Skip messages that can't be decrypted
                 continue
         

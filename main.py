@@ -44,7 +44,13 @@ def main():
     clear_terminal()
     
     # Setup
-    setup_messages()
+    # Setup
+    try:
+        setup_messages()
+    except Exception as e:
+        print(f"Failed to initialize message storage: {e}")
+        print("Please check permissions and try again.")
+        return
     
     while True:
         clear_terminal()

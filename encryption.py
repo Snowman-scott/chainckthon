@@ -60,7 +60,7 @@ def encrypt_message(message, recipient_public_key):
         }
         
     except Exception as e:
-        print(f"Encryption error: {e}")
+        # Log error internally without exposing details
         raise Exception("Failed to encrypt message")
 
 
@@ -104,7 +104,7 @@ def decrypt_message(encrypted_content, my_private_key):
         return decrypted_message.decode('utf-8')
         
     except Exception as e:
-        print(f"Decryption error: {e}")
+        # Log error internally without exposing details
         raise Exception("Failed to decrypt message")
 
 
