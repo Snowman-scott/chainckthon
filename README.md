@@ -1,6 +1,6 @@
 This Is our Python E2E Encrypted Messaging application
 
-We mainly focoused on a CLI version but i did manage to get a WebUI bersion working intime
+We mainly focoused on a CLI version but i did manage to get a WebUI Version working intime
 
 I have also given a YouTube Video link in incase you do not want to try running it as it is only a demo
 
